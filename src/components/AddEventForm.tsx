@@ -55,6 +55,22 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
     }
   }, [editingEvent]);
 
+  useEffect(() => {
+    if (dayClicked) {
+      setStartTime(null);
+      setEndTime(null);
+      setFullDayEvent(true);
+    }
+  }, [dayClicked]);
+
+  useEffect(() => {
+    if (dayClicked) {
+      setStartTime(new Date(dayClicked));
+      setEndTime(new Date(dayClicked));
+      setFullDayEvent(true);
+    }
+  }, [dayClicked, showForm]);
+  
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (selectedDay && name) {
