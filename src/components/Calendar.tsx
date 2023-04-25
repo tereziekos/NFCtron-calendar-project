@@ -20,6 +20,7 @@ const getLocalTimezoneDate = (dateString: string) => {
   return localDate;
 };
 
+
 const getStartDate = (date: Date) => {
   const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
   const dayOfWeek = firstDayOfMonth.getDay() || 7; // Monday is 1, Sunday is 7
@@ -34,6 +35,7 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
   const [calendarEvents, setCalendarEvents] = useState(events);
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
   const handleAddEvent = (event: Event) => {
     setCalendarEvents([...calendarEvents, event]);
@@ -41,8 +43,31 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
     setShowForm(false);
   };
 
+  const handleEditEvent = (updatedEvent: Event) => {
+    setCalendarEvents((prevEvents) =>
+      prevEvents.map((event) =>
+        event.name === updatedEvent.name &&
+        event.startTime.getTime() === updatedEvent.startTime.getTime() &&
+        event.endTime.getTime() === updatedEvent.endTime.getTime()
+          ? updatedEvent
+          : event
+      )
+    );
+  };
+
+  const handleDeleteEvent = (eventToDelete: Event) => {
+    setCalendarEvents((prevEvents) =>
+      prevEvents.filter((event) =>
+        !(event.name === eventToDelete.name &&
+          event.startTime.getTime() === eventToDelete.startTime.getTime() &&
+          event.endTime.getTime() === eventToDelete.endTime.getTime())
+      )
+    );
+  };
+
+
   const handleDayDoubleClick = (date: Date) => {
-    const localDate = getLocalTimezoneDate(date.toISOString().substring(0, 10));
+    const localDate = new Date(date);
     setSelectedDay(localDate);
     setShowForm(true);
   };
@@ -80,21 +105,26 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
       });
       cells.push(
         <div
-          key={i}
-          className="bg-f7e7ce h-full border border-brown-300 text-brown-600 p-2.5 rounded-lg shadow-md"
-          onDoubleClick={() => handleDayDoubleClick(currentCellDate)}
-        >
-          <div className="font-semibold">{currentCellDate.getDate()}</div>
-          {dayEvents.map((event) => (
-            <EventItem
-              key={event.name}
-              name={event.name}
-              startTime={event.startTime}
-              endTime={event.endTime}
-              color={event.color}
-            />
-          ))}
-        </div>
+        key={i}
+        className="bg-f7e7ce h-full border border-brown-300 text-brown-600 p-2.5 rounded-lg shadow-md"
+        onDoubleClick={() => handleDayDoubleClick(currentCellDate)}
+      >
+        <div className="font-semibold">{currentCellDate.getDate()}</div>
+        {dayEvents.map((event) => (
+          <EventItem
+          key={event.name}
+          name={event.name}
+          startTime={event.startTime}
+          endTime={event.endTime}
+          color={event.color}
+          onEditEvent={() => {
+            setEditingEvent(event);
+            setShowForm(true);
+          }}
+          onDeleteEvent={() => handleDeleteEvent(event)}
+        />
+        ))}
+      </div>
       );
     }
     return cells;
@@ -111,13 +141,16 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
 
   return (
     <div className="h-screen flex flex-col bg-fffff5 text-brown-600">
-      <AddEventForm
-        selectedDay={selectedDay}
-        dayClicked={selectedDay}
-        onAddEvent={handleAddEvent}
-        showForm={showForm}
-        setShowForm={setShowForm}
-      />
+    <AddEventForm
+      selectedDay={selectedDay}
+      dayClicked={selectedDay}
+      onAddEvent={handleAddEvent}
+      showForm={showForm}
+      setShowForm={setShowForm}
+      editingEvent={editingEvent}
+      onEditEvent={handleEditEvent}
+      setEditingEvent={setEditingEvent} 
+    />
       <div className="flex-grow-0 mt-1/8 text-left font-bold text-2xl pl-4">
         {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
       </div>
