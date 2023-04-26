@@ -95,6 +95,7 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
           ev.startTime.toDateString() === new Date(currentCellDate).toDateString() &&
           ev.endTime.toDateString() === new Date(currentCellDate).toDateString()
       );
+      console.log(existingEvent);
       if (existingEvent) {
         setCalendarEvents((prevEvents) =>
           prevEvents.map((ev) =>
