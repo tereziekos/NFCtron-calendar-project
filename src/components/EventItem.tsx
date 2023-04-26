@@ -32,11 +32,17 @@ const EventItem: React.FC<EventItemProps> = ({
       <div className="flex items-center absolute right-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <AiFillEdit
           className="text-xl cursor-pointer"
-          onClick={() => onEditEvent(event)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onEditEvent(event);
+          }}
         />
         <AiFillDelete
           className="text-xl cursor-pointer ml-2"
-          onClick={() => onDeleteEvent(event)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDeleteEvent(event);
+          }}
         />
       </div>
     </div>

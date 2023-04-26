@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Event {
+  id: string;
   name: string;
   startTime: Date;
   endTime: Date;
@@ -70,7 +72,7 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
       setFullDayEvent(true);
     }
   }, [dayClicked, showForm]);
-  
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (selectedDay && name) {
@@ -93,21 +95,26 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
             startTime: fullDayStartTime,
             endTime: fullDayEndTime,
             color,
+            id: uuidv4(),
           });
         }
       } else if (startTime && endTime) {
         if (editingEvent) {
           onEditEvent({ ...editingEvent, name, startTime, endTime, color });
         } else {
-          onAddEvent({ name, startTime, endTime, color });
+          onAddEvent({
+            name,
+            startTime,
+            endTime,
+            color,
+            id: uuidv4(),
+          });
         }
       }
       setName("");
       setStartTime(null);
       setEndTime(null);
       setColor("");
-      setShowForm(false);
-      setEditingEvent(null);
     }
   };
 
@@ -143,48 +150,39 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
       setEndTime(newEndTime);
     }
   };
+
   const startTimeInput = fullDayEvent ? (
     ""
   ) : (
     <input
       type="time"
       className="border border-gray-300 p-2 rounded-lg"
-      value={startTime ? startTime.toISOString().substr(11, 5) : ""}
-      onChange={(e) => {
-        if (selectedDay) {
-          const newStartTime = new Date(selectedDay);
-          const [hours, minutes] = e.target.value.split(":");
-          newStartTime.setUTCHours(parseInt(hours, 10));
-          newStartTime.setUTCMinutes(parseInt(minutes, 10));
-          setStartTime(newStartTime);
-        }
-      }}
+      value={
+        startTime ? startTime.toISOString().substr(11, 5) : "00:00"
+      }
+      name="startTime"
+      onChange={handleTimeChange}
     />
   );
-
+  
   const endTimeInput = fullDayEvent ? (
     ""
   ) : (
     <input
       type="time"
       className="border border-gray-300 p-2 rounded-lg"
-      value={endTime ? endTime.toISOString().substr(11, 5) : ""}
-      onChange={(e) => {
-        if (selectedDay) {
-          const newEndTime = new Date(selectedDay);
-          const [hours, minutes] = e.target.value.split(":");
-          newEndTime.setUTCHours(parseInt(hours, 10));
-          newEndTime.setUTCMinutes(parseInt(minutes, 10));
-          setEndTime(newEndTime);
-        }
-      }}
+      value={
+        endTime ? endTime.toISOString().substr(11, 5) : "00:00"
+      }
+      name="endTime"
+      onChange={handleTimeChange}
     />
   );
 
   return showForm ? (
     <form
       onSubmit={handleSubmit}
-      className="fixed inset-0 w-screen h-screen flex items-center justify-center bg-black bg-opacity-50"
+      className="fixed inset-0 w-screen h-screen flex items-center justify-center bg-black bg-opacity-50 z-50"
     >
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
         <h2 className="text-2xl font-bold mb-4">Add Event</h2>
@@ -232,33 +230,35 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
         <div className="mb-4">
           <label className="block mb-1">Event Color</label>
           <div className="flex space-x-2">
-            {[
-              "#FFB067",
-              "#FFED86",
-              "#A2DCE7",
-              "#F8CCDC",
-              "#D3D3CB",
-              "#F34C50",
-              "#DAD870",
-            ].map((paletteColor) => (
-              <label
-                key={paletteColor}
-                className="inline-flex items-center cursor-pointer"
-              >
-                <input
-                  type="radio"
-                  name="color"
-                  className="sr-only"
-                  value={paletteColor}
-                  checked={color === paletteColor}
-                  onChange={(e) => setColor(e.target.value)}
-                />
-                <span
-                  className="w-6 h-6 rounded-full border-2 border-gray-300"
-                  style={{ backgroundColor: paletteColor }}
-                ></span>
-              </label>
-            ))}
+                    {[
+            "#FFB067",
+            "#FFED86",
+            "#A2DCE7",
+            "#F8CCDC",
+            "#D3D3CB",
+            "#F34C50",
+            "#DAD870",
+          ].map((paletteColor) => (
+            <label
+              key={paletteColor}
+              className="inline-flex items-center cursor-pointer"
+            >
+              <input
+                type="radio"
+                name="color"
+                className="sr-only"
+                value={paletteColor}
+                checked={color === paletteColor}
+                onChange={(e) => setColor(e.target.value)}
+              />
+              <span
+                className={`w-6 h-6 rounded-full border-2 ${
+                  color === paletteColor ? "border-blue-500" : "border-gray-300"
+                }`}
+                style={{ backgroundColor: paletteColor }}
+              ></span>
+            </label>
+          ))}
           </div>
         </div>
         <div className="flex justify-between">

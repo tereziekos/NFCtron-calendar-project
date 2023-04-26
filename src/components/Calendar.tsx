@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AddEventForm from "./AddEventForm";
 import EventItem from "./EventItem";
+import { nanoid } from 'nanoid';
 
 interface Event {
   name: string;
@@ -35,10 +36,22 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  const handlePreviousMonth = () => {
+    setCurrentMonth((prevMonth) => (prevMonth === 0 ? 11 : prevMonth - 1));
+    setCurrentYear((prevYear) => (currentMonth === 0 ? prevYear - 1 : prevYear));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentMonth((prevMonth) => (prevMonth === 11 ? 0 : prevMonth + 1));
+    setCurrentYear((prevYear) => (currentMonth === 11 ? prevYear + 1 : prevYear));
+  };
 
 
   const handleAddEvent = (event: Event) => {
-    setCalendarEvents([...calendarEvents, event]);
+    setCalendarEvents([...calendarEvents, { ...event, id: nanoid() }]);
     setSelectedDay(null);
     setShowForm(false);
   };
@@ -53,13 +66,13 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
   const handleEditEvent = (updatedEvent: Event) => {
     setCalendarEvents((prevEvents) =>
       prevEvents.map((event) =>
-        event.name === updatedEvent.name &&
-        event.startTime.getTime() === updatedEvent.startTime.getTime() &&
-        event.endTime.getTime() === updatedEvent.endTime.getTime()
+        event.id === updatedEvent.id
           ? { ...event, ...updatedEvent }
           : event
       )
     );
+    setShowForm(false); // Hide the form after editing
+    setEditingEvent(null); // Reset the editingEvent state
   };
 
   const handleDeleteEvent = (eventToDelete: Event) => {
@@ -90,32 +103,14 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
     const event = JSON.parse(eventJson);
     const currentCellDate = e.currentTarget.dataset.date; // get the date as a string
     if (currentCellDate) {
-      const existingEvent = calendarEvents.find(
-        (ev) =>
-          ev.startTime.toDateString() === new Date(currentCellDate).toDateString() &&
-          ev.endTime.toDateString() === new Date(currentCellDate).toDateString()
-      );
-      console.log(existingEvent);
-      if (existingEvent) {
-        setCalendarEvents((prevEvents) =>
-          prevEvents.map((ev) =>
-            ev === existingEvent
-              ? {
-                  ...ev,
-                  startTime: new Date(currentCellDate),
-                  endTime: new Date(currentCellDate),
-                }
-              : ev
-          )
-        );
-      } else {
-        const updatedEvent = {
-          ...event,
-          startTime: new Date(currentCellDate),
-          endTime: new Date(currentCellDate),
-        };
-        setCalendarEvents((prevEvents) => [...prevEvents, updatedEvent]);
-      }
+      const newEvents = calendarEvents.map((ev) => {
+        if (ev.id === event.id) {
+          ev.startTime = new Date(currentCellDate);
+          ev.endTime = new Date(currentCellDate);
+        }
+        return ev;
+      });
+      setCalendarEvents(newEvents);
     }
   };
 
@@ -142,6 +137,8 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
   ];
 
   const renderCalendarCells = () => {
+    const startDate = new Date(currentYear, currentMonth, 1);
+    const endDate = new Date(currentYear, currentMonth + 1, 0);
     const cells = [];
     for (let i = 0; i < 42; i++) {
       const currentCellDate = new Date(startDate);
@@ -161,38 +158,38 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
   
       cells.push(
         <div
-        key={i}
-        className={`h-full border border-brown-300 p-2.5 rounded-lg shadow-md ${isToday ? 'bg-red-50' : ''}`}
-        onDoubleClick={() => handleDayDoubleClick(currentCellDate)}
-        onDrop={(e) => handleDrop(e)}
-        onDragOver={(e) => {
-          e.preventDefault();
-        }}
-        data-date={currentCellDate.toISOString()}
-      >
-        <div className={`font-semibold ${isToday ? 'text-red-500' : ''}`}>{currentCellDate.getDate()}</div>
-        {dayEvents.map((event) => (
-          <div
-            key={event.name}
-            draggable={true}
-            onDragStart={(e) => handleDragStart(e, event)}
-            onDragEnd={handleDragEnd}
-          >
-            <EventItem
-              event={event}
-              onEditEvent={() => {
-                setEditingEvent(event);
-                setShowForm(true);
-              }}
-              onDeleteEvent={() => handleDeleteEvent(event)}
+          key={i}
+          className={`h-full border border-brown-300 p-2.5 rounded-lg shadow-md ${isToday ? 'bg-[#ffe4cb95]' : ''}`}
+          onDoubleClick={() => handleDayDoubleClick(currentCellDate)}
+          onDrop={(e) => handleDrop(e)}
+          onDragOver={(e) => {
+            e.preventDefault();
+          }}
+          data-date={currentCellDate.toISOString()}
+        >
+          <div className={`font-semibold ${isToday ? 'bg-[#FFB067] text-white rounded-full w-8 h-8 flex items-center justify-center' : ''}`}>{currentCellDate.getDate()}</div>
+          {dayEvents.map((event) => (
+            <div
+              key={event.name}
+              draggable={true}
+              onDragStart={(e) => handleDragStart(e, event)}
               onDragEnd={handleDragEnd}
-            />
-          </div>
-        ))}
-      </div>
+            >
+              <EventItem
+                event={event}
+                onEditEvent={() => {
+                  setEditingEvent(event);
+                  setShowForm(true);
+                }}
+                onDeleteEvent={() => handleDeleteEvent(event)}
+                onDragEnd={handleDragEnd}
+              />
+            </div>
+          ))}
+        </div>
       );
-    }
-    return cells;
+      }
+      return cells;
   };
 
   const renderDaysOfWeek = () => {
@@ -216,9 +213,23 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
       onEditEvent={handleEditEvent}
       setEditingEvent={setEditingEvent} 
     />
-      <div className="flex-grow-0 mt-1/8 text-left font-bold text-2xl pl-4">
-        {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-      </div>
+    <div className="flex items-center justify-between mb-4">
+    <button
+        onClick={handlePreviousMonth}
+        className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
+      >
+        &lt;
+      </button>
+      <h2 className="text-xl font-bold">
+        {monthNames[currentMonth]} {currentYear}
+      </h2>
+      <button
+        onClick={handleNextMonth}
+        className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
+      >
+        &gt;
+      </button>
+    </div>
       <div className="grid grid-cols-7 gap-2 my-4">{renderDaysOfWeek()}</div>
       <div className="grid grid-cols-7 gap-2 flex-grow">
         {renderCalendarCells().map((cell, index) => (
