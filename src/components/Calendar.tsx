@@ -195,11 +195,12 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
   const renderDaysOfWeek = () => {
     const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
     return days.map((day, index) => (
-      <div key={index} className="text-lg font-semibold text-center">
+      <div key={index} className="text-lg font-semibold text-center bg-[#ffc233] text-white p-2 rounded-md">
         {day}
       </div>
     ));
   };
+  
 
   return (
     <div className="h-screen flex flex-col bg-fffff5 text-brown-600">
@@ -213,14 +214,14 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
       onEditEvent={handleEditEvent}
       setEditingEvent={setEditingEvent} 
     />
-    <div className="flex items-center justify-between mb-4">
+    <div className="flex items-center justify-between mb-0">
     <button
         onClick={handlePreviousMonth}
         className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
       >
         &lt;
       </button>
-      <h2 className="text-xl font-bold">
+      <h2 className="text-2xl font-semibold text-brown-600 font-poppins bg-brown-100 px-4 py-2 rounded-md">
         {monthNames[currentMonth]} {currentYear}
       </h2>
       <button
@@ -230,14 +231,14 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
         &gt;
       </button>
     </div>
-      <div className="grid grid-cols-7 gap-2 my-4">{renderDaysOfWeek()}</div>
-      <div className="grid grid-cols-7 gap-2 flex-grow">
-        {renderCalendarCells().map((cell, index) => (
-          <div key={index}>
-            {cell}
-          </div>
-        ))}
-      </div>
+    <div className="grid grid-cols-7 gap-2 my-2">{renderDaysOfWeek()}</div>
+    <div className="grid grid-cols-7 gap-2 flex-grow">
+      {renderCalendarCells().map((cell, index) => (
+        <div key={index}>
+          {cell}
+        </div>
+      ))}
+    </div>
     </div>
   );
 };
