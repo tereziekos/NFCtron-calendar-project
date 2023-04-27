@@ -1,28 +1,25 @@
 import React, { useState } from "react";
 import AddEventForm from "./AddEventForm";
 import EventItem from "./EventItem";
+import { nanoid } from "nanoid";
 import { CalendarEvent } from "./types";
 
 interface WeekViewProps {
   events: CalendarEvent[];
   weekStartDate: Date;
-  handleAddEvent: (event: CalendarEvent) => void;
-  handleDeleteEvent: (event: CalendarEvent) => void;
 }
 
-const WeekView: React.FC<WeekViewProps> = ({
-  events,
-  weekStartDate,
-  handleAddEvent,
-  handleDeleteEvent,
-}) => {
+const WeekView: React.FC<WeekViewProps> = ({ events, weekStartDate }) => {
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(events);
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const days: Date[] = Array.from({ length: 7 }, (_, i) => {
-    const day = new Date(weekStartDate);
-    day.setDate(day.getDate() + i);
-    return day;
-  });
+
+  const handleAddEvent = (event: CalendarEvent) => {
+    setCalendarEvents([...calendarEvents, { ...event, id: nanoid() }]);
+    setSelectedDay(null);
+    setShowForm(false);
+  };
+
   const handleDragEnd = (e: React.DragEvent<HTMLDivElement>, droppedEvent: CalendarEvent) => {
     const updatedEvents = calendarEvents.map((event) => {
       if (event.id === droppedEvent.id) {
@@ -37,21 +34,22 @@ const WeekView: React.FC<WeekViewProps> = ({
   const renderWeekCells = () => {
     const cells = [];
     for (let i = 0; i < 7; i++) {
-      const currentCellDate = days[i];
-  
+      const currentCellDate = new Date(weekStartDate);
+      currentCellDate.setDate(currentCellDate.getDate() + i);
+
       const isToday =
         currentCellDate.toDateString() === new Date().toDateString();
-  
-      const dayEvents = events.filter((event) => {
-        const eventStartTime = new Date(event.start);
-        const eventEndTime = new Date(event.end);
+
+      const dayEvents = calendarEvents.filter((event) => {
+        const eventStartTime = new Date(event.startTime);
+        const eventEndTime = new Date(event.endTime);
         return (
           eventStartTime.getDate() === currentCellDate.getDate() &&
           eventStartTime.getMonth() === currentCellDate.getMonth() &&
           eventStartTime.getFullYear() === currentCellDate.getFullYear()
         );
       });
-  
+
       cells.push(
         <div
           key={i}
@@ -73,7 +71,11 @@ const WeekView: React.FC<WeekViewProps> = ({
             <EventItem
               key={event.id}
               event={event}
-              onDeleteEvent={() => handleDeleteEvent(event)}
+              onDeleteEvent={() =>
+                setCalendarEvents((prevEvents) =>
+                  prevEvents.filter((e) => e.id !== event.id)
+                )
+              }
               onDragEnd={() => {}}
             />
           ))}
@@ -81,31 +83,22 @@ const WeekView: React.FC<WeekViewProps> = ({
       );
     }
     return cells;
-  };
+};
 
-return (
-    <div>
-        <div className="flex justify-between items-center mb-2">
-        {renderWeekCells()}
-        </div>
-      
-      {selectedDay && (
-        <div>
-          <button onClick={() => setShowForm(!showForm)}>
-            {showForm ? "Close" : "Add Event"}
-          </button>
-          {showForm && (
-            <AddEventForm
-                        selectedDay={selectedDay}
-                        onAddEvent={(event) => {
-                            handleAddEvent(event);
-                            setShowForm(false);
-                        } } dayClicked={null} showForm={false} setShowForm={function (value: boolean): void {
-                            throw new Error("Function not implemented.");
-                        } }            />
-          )}
-        </div>
-      )}
+  return (
+    <div className="h-screen flex flex-col bg-fffff5 text-brown-600">
+       <AddEventForm
+        selectedDay={selectedDay}
+        onAddEvent={handleAddEvent}
+        showForm={showForm}
+        setShowForm={setShowForm}
+        dayClicked={null}
+      />
+      <div className="grid grid-cols-7 gap-2 flex-grow">
+        {renderWeekCells().map((cell, index) => (
+          <div key={index}>{cell}</div>
+        ))}
+      </div>
     </div>
   );
 };

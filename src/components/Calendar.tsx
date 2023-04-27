@@ -224,12 +224,7 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
       {view === "week" ? (
         <>
         <div className="grid grid-cols-7 gap-2 my-2">{renderDaysOfWeek()}</div>
-            <WeekView
-          events={calendarEvents}
-          weekStartDate={weekStartDate}
-          handleAddEvent={handleAddEvent}
-          handleDeleteEvent={handleDeleteEvent}
-        />
+        <WeekView events={calendarEvents} weekStartDate={weekStartDate} />
         </>
       ) : (
         <>
