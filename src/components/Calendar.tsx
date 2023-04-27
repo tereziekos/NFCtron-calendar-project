@@ -3,6 +3,7 @@ import AddEventForm from "./AddEventForm";
 import EventItem from "./EventItem";
 import { nanoid } from "nanoid";
 import { CalendarEvent } from "./types";
+import WeekView from "./WeekView";
 
 interface CalendarProps {
   events: CalendarEvent[];
@@ -24,6 +25,8 @@ const getStartDate = (date: Date) => {
 };
 
 const Calendar: React.FC<CalendarProps> = ({ events }) => {
+  const [view, setView] = useState<"month" | "week">("month");
+  const [weekStartDate, setWeekStartDate] = useState(new Date());
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(events);
   const currentDate = new Date(); // You can use a state to manage the current date
   const startDate = getStartDate(currentDate);
@@ -50,6 +53,18 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
     setCalendarEvents([...calendarEvents, { ...event, id: nanoid() }]);
     setSelectedDay(null);
     setShowForm(false);
+  };
+
+  const handleWeekViewClick = () => {
+    setView("week");
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay());
+    setWeekStartDate(startOfWeek);
+  };
+
+  const handleMonthViewClick = () => {
+    setView("month");
   };
 
   const isToday = (date: Date) => {
@@ -178,10 +193,10 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
               onDragEnd={handleDragEnd}
             >
               <EventItem
-              event={event}
-              onDeleteEvent={() => handleDeleteEvent(event)}
-              onDragEnd={handleDragEnd}
-            />
+                event={event}
+                onDeleteEvent={() => handleDeleteEvent(event)}
+                onDragEnd={handleDragEnd}
+              />
             </div>
           ))}
         </div>
@@ -201,39 +216,57 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
       </div>
     ));
   };
-
   return (
     <div className="h-screen flex flex-col bg-fffff5 text-brown-600">
-      <AddEventForm
-        selectedDay={selectedDay}
-        dayClicked={selectedDay}
-        onAddEvent={handleAddEvent}
-        showForm={showForm}
-        setShowForm={setShowForm}
-      />
-      <div className="flex items-center justify-between mb-0">
-        <button
-          onClick={handlePreviousMonth}
-          className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
-        >
-          &lt;
-        </button>
-        <h2 className="text-2xl font-semibold text-brown-600 font-poppins bg-brown-100 px-4 py-2 rounded-md">
-          {monthNames[currentMonth]} {currentYear}
-        </h2>
-        <button
-          onClick={handleNextMonth}
-          className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
-        >
-          &gt;
-        </button>
-      </div>
-      <div className="grid grid-cols-7 gap-2 my-2">{renderDaysOfWeek()}</div>
-      <div className="grid grid-cols-7 gap-2 flex-grow">
-        {renderCalendarCells().map((cell, index) => (
-          <div key={index}>{cell}</div>
-        ))}
-      </div>
+      
+      <button onClick={handleMonthViewClick}>Month View</button>
+      <button onClick={handleWeekViewClick}>Week View</button>
+      {view === "week" ? (
+        <>
+        <div className="grid grid-cols-7 gap-2 my-2">{renderDaysOfWeek()}</div>
+            <WeekView
+          events={calendarEvents}
+          weekStartDate={weekStartDate}
+          handleAddEvent={handleAddEvent}
+          handleDeleteEvent={handleDeleteEvent}
+        />
+        </>
+      ) : (
+        <>
+          <AddEventForm
+            selectedDay={selectedDay}
+            dayClicked={selectedDay}
+            onAddEvent={handleAddEvent}
+            showForm={showForm}
+            setShowForm={setShowForm}
+          />
+          <div className="flex items-center justify-between mb-0">
+            <button
+              onClick={handlePreviousMonth}
+              className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
+            >
+              &lt;
+            </button>
+            <h2 className="text-2xl font-semibold text-brown-600 font-poppins bg-brown-100 px-4 py-2 rounded-md">
+              {monthNames[currentMonth]} {currentYear}
+            </h2>
+            <button
+              onClick={handleNextMonth}
+              className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
+            >
+              &gt;
+            </button>
+          </div>
+          <div className="grid grid-cols-7 gap-2 my-2">
+            {renderDaysOfWeek()}
+          </div>
+          <div className="grid grid-cols-7 gap-2 flex-grow">
+            {renderCalendarCells().map((cell, index) => (
+              <div key={index}>{cell}</div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };
