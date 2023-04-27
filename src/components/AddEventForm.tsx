@@ -1,23 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuidv4 } from 'uuid';
-
-interface Event {
-  id: string;
-  name: string;
-  startTime: Date;
-  endTime: Date;
-  color?: string;
-}
+import { v4 as uuidv4 } from "uuid";
+import { CalendarEvent } from "./types";
 
 interface AddEventFormProps {
   selectedDay: Date | null;
   dayClicked: Date | null;
-  onAddEvent: (event: Event) => void;
+  onAddEvent: (event: CalendarEvent) => void;
   showForm: boolean;
   setShowForm: (value: boolean) => void;
-  editingEvent: Event | null;
-  onEditEvent: (event: Event) => void;
-  setEditingEvent: (event: Event | null) => void;
+  editingEvent: CalendarEvent | null;
+  onEditEvent: (event: CalendarEvent) => void;
+  setEditingEvent: (event: CalendarEvent | null) => void;
 }
 
 const AddEventForm: React.FC<AddEventFormProps> = ({
@@ -157,23 +150,19 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
     <input
       type="time"
       className="border border-gray-300 p-2 rounded-lg"
-      value={
-        startTime ? startTime.toISOString().substr(11, 5) : "00:00"
-      }
+      value={startTime ? startTime.toISOString().substr(11, 5) : "00:00"}
       name="startTime"
       onChange={handleTimeChange}
     />
   );
-  
+
   const endTimeInput = fullDayEvent ? (
     ""
   ) : (
     <input
       type="time"
       className="border border-gray-300 p-2 rounded-lg"
-      value={
-        endTime ? endTime.toISOString().substr(11, 5) : "00:00"
-      }
+      value={endTime ? endTime.toISOString().substr(11, 5) : "00:00"}
       name="endTime"
       onChange={handleTimeChange}
     />
@@ -230,35 +219,37 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
         <div className="mb-4">
           <label className="block mb-1">Event Color</label>
           <div className="flex space-x-2">
-                    {[
-            "#FFB067",
-            "#FFED86",
-            "#A2DCE7",
-            "#F8CCDC",
-            "#D3D3CB",
-            "#F34C50",
-            "#DAD870",
-          ].map((paletteColor) => (
-            <label
-              key={paletteColor}
-              className="inline-flex items-center cursor-pointer"
-            >
-              <input
-                type="radio"
-                name="color"
-                className="sr-only"
-                value={paletteColor}
-                checked={color === paletteColor}
-                onChange={(e) => setColor(e.target.value)}
-              />
-              <span
-                className={`w-6 h-6 rounded-full border-2 ${
-                  color === paletteColor ? "border-blue-500" : "border-gray-300"
-                }`}
-                style={{ backgroundColor: paletteColor }}
-              ></span>
-            </label>
-          ))}
+            {[
+              "#FFB067",
+              "#FFED86",
+              "#A2DCE7",
+              "#F8CCDC",
+              "#D3D3CB",
+              "#F34C50",
+              "#DAD870",
+            ].map((paletteColor) => (
+              <label
+                key={paletteColor}
+                className="inline-flex items-center cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="color"
+                  className="sr-only"
+                  value={paletteColor}
+                  checked={color === paletteColor}
+                  onChange={(e) => setColor(e.target.value)}
+                />
+                <span
+                  className={`w-6 h-6 rounded-full border-2 ${
+                    color === paletteColor
+                      ? "border-blue-500"
+                      : "border-gray-300"
+                  }`}
+                  style={{ backgroundColor: paletteColor }}
+                ></span>
+              </label>
+            ))}
           </div>
         </div>
         <div className="flex justify-between">

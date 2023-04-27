@@ -1,10 +1,11 @@
 import React from "react";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
+import { CalendarEvent } from "./types";
 
 interface EventItemProps {
-  event: Event;
-  onEditEvent: (event: Event) => void;
-  onDeleteEvent: (event: Event) => void;
+  event: CalendarEvent;
+  onEditEvent: (event: CalendarEvent) => void;
+  onDeleteEvent: (event: CalendarEvent) => void;
   onDragEnd: (e: React.DragEvent<HTMLDivElement>) => void;
 }
 
@@ -16,7 +17,10 @@ const EventItem: React.FC<EventItemProps> = ({
 }) => {
   const { name, startTime, endTime, color } = event;
 
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, event: Event) => {
+  const handleDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    event: CalendarEvent
+  ) => {
     e.dataTransfer.setData("text/plain", JSON.stringify(event));
   };
 
