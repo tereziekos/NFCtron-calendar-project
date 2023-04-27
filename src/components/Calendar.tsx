@@ -29,7 +29,6 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
   const startDate = getStartDate(currentDate);
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
@@ -60,16 +59,6 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
       date.getMonth() === today.getMonth() &&
       date.getFullYear() === today.getFullYear()
     );
-  };
-
-  const handleEditEvent = (updatedEvent: CalendarEvent) => {
-    setCalendarEvents((prevEvents) =>
-      prevEvents.map((event) =>
-        event.id === updatedEvent.id ? { ...event, ...updatedEvent } : event
-      )
-    );
-    setShowForm(false); // Hide the form after editing
-    setEditingEvent(null); // Reset the editingEvent state
   };
 
   const handleDeleteEvent = (eventToDelete: CalendarEvent) => {
@@ -189,15 +178,10 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
               onDragEnd={handleDragEnd}
             >
               <EventItem
-                event={event}
-                onEditEvent={() => {
-                  setSelectedDay(currentCellDate);
-                  setEditingEvent(event);
-                  setShowForm(true);
-                }}
-                onDeleteEvent={() => handleDeleteEvent(event)}
-                onDragEnd={handleDragEnd}
-              />
+              event={event}
+              onDeleteEvent={() => handleDeleteEvent(event)}
+              onDragEnd={handleDragEnd}
+            />
             </div>
           ))}
         </div>
@@ -226,9 +210,6 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
         onAddEvent={handleAddEvent}
         showForm={showForm}
         setShowForm={setShowForm}
-        editingEvent={editingEvent}
-        onEditEvent={handleEditEvent}
-        setEditingEvent={setEditingEvent}
       />
       <div className="flex items-center justify-between mb-0">
         <button

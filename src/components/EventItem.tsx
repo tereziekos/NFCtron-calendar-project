@@ -1,17 +1,15 @@
 import React from "react";
-import { AiFillEdit, AiFillDelete } from "react-icons/ai";
+import { AiFillDelete } from "react-icons/ai";
 import { CalendarEvent } from "./types";
 
 interface EventItemProps {
   event: CalendarEvent;
-  onEditEvent: (event: CalendarEvent) => void;
   onDeleteEvent: (event: CalendarEvent) => void;
   onDragEnd: (e: React.DragEvent<HTMLDivElement>) => void;
 }
 
 const EventItem: React.FC<EventItemProps> = ({
   event,
-  onEditEvent,
   onDeleteEvent,
   onDragEnd,
 }) => {
@@ -34,13 +32,6 @@ const EventItem: React.FC<EventItemProps> = ({
     >
       <div>{name}</div>
       <div className="flex items-center absolute right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <AiFillEdit
-          className="text-xl cursor-pointer"
-          onClick={(e) => {
-            e.stopPropagation();
-            onEditEvent(event);
-          }}
-        />
         <AiFillDelete
           className="text-xl cursor-pointer ml-2"
           onClick={(e) => {
