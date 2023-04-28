@@ -28,6 +28,11 @@ const WeekView: React.FC<WeekViewProps> = ({
     const cells = [];
     for (let i = 0; i < 7; i++) {
       const currentCellDate = new Date(weekStartDate);
+      const startDay = currentCellDate.getDay();
+      if (startDay !== 1) { 
+        currentCellDate.setDate(currentCellDate.getDate() - (startDay - 1));
+      }
+
       currentCellDate.setDate(currentCellDate.getDate() + i);
 
       const isToday =

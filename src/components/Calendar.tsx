@@ -98,6 +98,10 @@ const Calendar = () => {
 
   const renderCalendarCells = () => {
     const startDate = new Date(currentYear, currentMonth, 1);
+    const startDay = startDate.getDay();
+    if (startDay !== 1) {
+      startDate.setDate(startDate.getDate() - (startDay - 1));
+    }
     const cells = [];
     for (let i = 0; i < 42; i++) {
       const currentCellDate = new Date(startDate);
