@@ -5,14 +5,9 @@ import { CalendarEvent } from "./types";
 interface EventItemProps {
   event: CalendarEvent;
   onDeleteEvent: (event: CalendarEvent) => void;
-  onDragEnd: (e: React.DragEvent<HTMLDivElement>) => void;
 }
 
-const EventItem: React.FC<EventItemProps> = ({
-  event,
-  onDeleteEvent,
-  onDragEnd,
-}) => {
+const EventItem: React.FC<EventItemProps> = ({ event, onDeleteEvent }) => {
   const { name, startTime, endTime, color } = event;
 
   const handleDragStart = (
@@ -28,7 +23,6 @@ const EventItem: React.FC<EventItemProps> = ({
       style={{ backgroundColor: color || "#f3e8e2" }}
       draggable={true}
       onDragStart={(e) => handleDragStart(e, event)}
-      onDragEnd={onDragEnd}
     >
       <div>
         {name} {startTime.getHours()}-{endTime.getHours()}

@@ -9,6 +9,11 @@ interface WeekViewProps {
   setSelectedDay: (date: Date | null) => void;
   handleDayDoubleClick: (date: Date) => void;
   handleDeleteEvent: (event: CalendarEvent) => void;
+  handleDragStart: (
+    e: React.DragEvent<HTMLDivElement>,
+    event: CalendarEvent
+  ) => void;
+  handleDrop: (e: React.DragEvent<HTMLDivElement>) => void;
 }
 
 const WeekView: React.FC<WeekViewProps> = ({
@@ -16,6 +21,8 @@ const WeekView: React.FC<WeekViewProps> = ({
   weekStartDate,
   handleDayDoubleClick,
   handleDeleteEvent,
+  handleDragStart,
+  handleDrop,
 }) => {
   const renderWeekCells = () => {
     const cells = [];
@@ -42,6 +49,11 @@ const WeekView: React.FC<WeekViewProps> = ({
             isToday ? "bg-[#ffe4cb95]" : ""
           }`}
           onDoubleClick={() => handleDayDoubleClick(currentCellDate)}
+          onDrop={(e) => handleDrop(e)}
+          onDragOver={(e) => {
+            e.preventDefault();
+          }}
+          data-date={currentCellDate.toISOString()}
         >
           <div
             className={`font-semibold ${
@@ -53,12 +65,16 @@ const WeekView: React.FC<WeekViewProps> = ({
             {currentCellDate.getDate()}
           </div>
           {dayEvents.map((event) => (
-            <EventItem
+            <div
               key={event.id}
-              event={event}
-              onDragEnd={() => {}}
-              onDeleteEvent={handleDeleteEvent}
-            />
+              draggable={true}
+              onDragStart={(e) => handleDragStart(e, event)}
+            >
+              <EventItem
+                event={event}
+                onDeleteEvent={() => handleDeleteEvent(event)}
+              />
+            </div>
           ))}
         </div>
       );

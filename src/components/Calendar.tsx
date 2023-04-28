@@ -52,10 +52,6 @@ const Calendar = () => {
     );
   };
 
-  const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
-    console.log("drag ended");
-  };
-
   const handleDragStart = (
     e: React.DragEvent<HTMLDivElement>,
     event: CalendarEvent
@@ -143,15 +139,13 @@ const Calendar = () => {
           </div>
           {dayEvents.map((event) => (
             <div
-              key={event.name}
+              key={event.id}
               draggable={true}
               onDragStart={(e) => handleDragStart(e, event)}
-              onDragEnd={handleDragEnd}
             >
               <EventItem
                 event={event}
                 onDeleteEvent={() => handleDeleteEvent(event)}
-                onDragEnd={handleDragEnd}
               />
             </div>
           ))}
@@ -195,6 +189,8 @@ const Calendar = () => {
             setSelectedDay={setSelectedDay}
             handleDayDoubleClick={handleDayDoubleClick}
             handleDeleteEvent={handleDeleteEvent}
+            handleDragStart={handleDragStart}
+            handleDrop={handleDrop}
           />
         </>
       ) : (
