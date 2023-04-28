@@ -194,6 +194,7 @@ const Calendar = () => {
             handleAddEvent={handleAddEvent}
             setSelectedDay={setSelectedDay}
             handleDayDoubleClick={handleDayDoubleClick}
+            handleDeleteEvent={handleDeleteEvent}
           />
         </>
       ) : (

@@ -8,12 +8,14 @@ interface WeekViewProps {
   handleAddEvent: (event: CalendarEvent) => void;
   setSelectedDay: (date: Date | null) => void;
   handleDayDoubleClick: (date: Date) => void;
+  handleDeleteEvent: (event: CalendarEvent) => void;
 }
 
 const WeekView: React.FC<WeekViewProps> = ({
   calendarEvents,
   weekStartDate,
   handleDayDoubleClick,
+  handleDeleteEvent,
 }) => {
   const renderWeekCells = () => {
     const cells = [];
@@ -55,7 +57,7 @@ const WeekView: React.FC<WeekViewProps> = ({
               key={event.id}
               event={event}
               onDragEnd={() => {}}
-              onDeleteEvent={() => {}}
+              onDeleteEvent={handleDeleteEvent}
             />
           ))}
         </div>
