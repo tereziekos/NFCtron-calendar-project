@@ -24,6 +24,9 @@ const WeekView: React.FC<WeekViewProps> = ({
   handleDragStart,
   handleDrop,
 }) => {
+
+
+
   const renderWeekCells = () => {
     const cells = [];
     for (let i = 0; i < 7; i++) {
@@ -89,6 +92,7 @@ const WeekView: React.FC<WeekViewProps> = ({
 
   return (
     <div className="h-screen flex flex-col bg-fffff5 text-brown-600">
+      
       <div className="grid grid-cols-7 gap-2 flex-grow">
         {renderWeekCells().map((cell, index) => (
           <div key={index}>{cell}</div>

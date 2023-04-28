@@ -71,7 +71,6 @@ const Calendar = () => {
           ev.startTime.setHours(new Date(event.startTime).getHours());
           ev.endTime = new Date(currentCellDate);
           ev.endTime.setHours(new Date(event.endTime).getHours());
-
         }
         return ev;
       });
@@ -175,8 +174,41 @@ const Calendar = () => {
   };
   return (
     <div className="h-screen flex flex-col bg-fffff5 text-brown-600">
-      <button onClick={handleMonthViewClick}>Month View</button>
-      <button onClick={handleWeekViewClick}>Week View</button>
+      <div className="flex flex-row">
+        <div className="flex items-center ml-4 mt-3 w-1/6">
+          <button
+            onClick={handleMonthViewClick}
+            className="bg-[#c96e32] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551] mr-2"
+          >
+            Month
+          </button>
+          <button
+            onClick={handleWeekViewClick}
+            className="bg-[#c96e32] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551] mr-2"
+          >
+            Week
+          </button>
+        </div>
+        <div className="flex items-center mx-auto mb-0">
+          <button
+            onClick={handlePreviousMonth}
+            className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
+          >
+            &lt;
+          </button>
+          <h2 className="text-2xl font-semibold text-brown-600 font-poppins bg-brown-100 px-4 py-2 rounded-md">
+            {monthNames[currentMonth]} {currentYear}
+          </h2>
+          <button
+            onClick={handleNextMonth}
+            className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
+          >
+            &gt;
+          </button>
+        </div>
+        <div className="flex items-center mr-4 mt-3 w-1/6"></div>
+      </div>
+      <div className="grid grid-cols-7 gap-2 my-2">{renderDaysOfWeek()}</div>
       <AddEventForm
         selectedDay={selectedDay}
         dayClicked={selectedDay}
@@ -186,9 +218,6 @@ const Calendar = () => {
       />
       {view === "week" ? (
         <>
-          <div className="grid grid-cols-7 gap-2 my-2">
-            {renderDaysOfWeek()}
-          </div>
           <WeekView
             calendarEvents={calendarEvents}
             weekStartDate={weekStartDate}
@@ -202,26 +231,6 @@ const Calendar = () => {
         </>
       ) : (
         <>
-          <div className="flex items-center justify-between mb-0">
-            <button
-              onClick={handlePreviousMonth}
-              className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
-            >
-              &lt;
-            </button>
-            <h2 className="text-2xl font-semibold text-brown-600 font-poppins bg-brown-100 px-4 py-2 rounded-md">
-              {monthNames[currentMonth]} {currentYear}
-            </h2>
-            <button
-              onClick={handleNextMonth}
-              className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
-            >
-              &gt;
-            </button>
-          </div>
-          <div className="grid grid-cols-7 gap-2 my-2">
-            {renderDaysOfWeek()}
-          </div>
           <div className="grid grid-cols-7 gap-2 flex-grow">
             {renderCalendarCells().map((cell, index) => (
               <div key={index}>{cell}</div>
