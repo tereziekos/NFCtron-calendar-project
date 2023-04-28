@@ -28,6 +28,18 @@ const Calendar = () => {
     );
   };
 
+  const handlePreviousWeek = () => {
+    const prevWeekStartDate = new Date(weekStartDate);
+    prevWeekStartDate.setDate(weekStartDate.getDate() - 7);
+    setWeekStartDate(prevWeekStartDate);
+  };
+
+  const handleNextWeek = () => {
+    const nextWeekStartDate = new Date(weekStartDate);
+    nextWeekStartDate.setDate(weekStartDate.getDate() + 7);
+    setWeekStartDate(nextWeekStartDate);
+  };
+
   const handleAddEvent = (event: CalendarEvent) => {
     setCalendarEvents([...calendarEvents, { ...event, id: nanoid() }]);
     setSelectedDay(null);
@@ -189,23 +201,43 @@ const Calendar = () => {
             Week
           </button>
         </div>
-        <div className="flex items-center mx-auto mb-0">
-          <button
-            onClick={handlePreviousMonth}
-            className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
-          >
-            &lt;
-          </button>
-          <h2 className="text-2xl font-semibold text-brown-600 font-poppins bg-brown-100 px-4 py-2 rounded-md">
-            {monthNames[currentMonth]} {currentYear}
-          </h2>
-          <button
-            onClick={handleNextMonth}
-            className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
-          >
-            &gt;
-          </button>
-        </div>
+        {view === "week" ? (
+          <div className="flex items-center mx-auto mb-0">
+            <button
+              onClick={handlePreviousWeek}
+              className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
+            >
+              &lt;
+            </button>
+            <h2 className="text-2xl font-semibold text-brown-600 font-poppins bg-brown-100 px-4 py-2 rounded-md">
+            {new Date(new Date(weekStartDate).getTime() + 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {new Date(new Date(weekStartDate).getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+            </h2>
+            <button
+              onClick={handleNextWeek}
+              className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
+            >
+              &gt;
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center mx-auto mb-0">
+            <button
+              onClick={handlePreviousMonth}
+              className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
+            >
+              &lt;
+            </button>
+            <h2 className="text-2xl font-semibold text-brown-600 font-poppins bg-brown-100 px-4 py-2 rounded-md">
+              {monthNames[currentMonth]} {currentYear}
+            </h2>
+            <button
+              onClick={handleNextMonth}
+              className="bg-[#7F5539] text-white px-3 py-1 rounded-md shadow-md hover:bg-[#A47551]"
+            >
+              &gt;
+            </button>
+          </div>
+        )}
         <div className="flex items-center mr-4 mt-3 w-1/6"></div>
       </div>
       <div className="grid grid-cols-7 gap-2 my-2">{renderDaysOfWeek()}</div>
