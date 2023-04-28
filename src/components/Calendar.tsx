@@ -68,7 +68,10 @@ const Calendar = () => {
       const newEvents = calendarEvents.map((ev) => {
         if (ev.id === event.id) {
           ev.startTime = new Date(currentCellDate);
+          ev.startTime.setHours(new Date(event.startTime).getHours());
           ev.endTime = new Date(currentCellDate);
+          ev.endTime.setHours(new Date(event.endTime).getHours());
+
         }
         return ev;
       });
