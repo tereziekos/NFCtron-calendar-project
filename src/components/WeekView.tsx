@@ -5,31 +5,21 @@ import { nanoid } from "nanoid";
 import { CalendarEvent } from "./types";
 
 interface WeekViewProps {
-  events: CalendarEvent[];
+  calendarEvents: CalendarEvent[];
   weekStartDate: Date;
+  handleAddEvent: (event: CalendarEvent) => void;
+  setSelectedDay: (date: Date | null) => void;
+  handleDayDoubleClick: (date: Date) => void;
 }
 
-const WeekView: React.FC<WeekViewProps> = ({ events, weekStartDate }) => {
-  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(events);
-  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+const WeekView: React.FC<WeekViewProps> = ({
+  calendarEvents,
+  weekStartDate,
+  handleAddEvent,
+  setSelectedDay,
+  handleDayDoubleClick,
+}) => {
   const [showForm, setShowForm] = useState(false);
-
-  const handleAddEvent = (event: CalendarEvent) => {
-    setCalendarEvents([...calendarEvents, { ...event, id: nanoid() }]);
-    setSelectedDay(null);
-    setShowForm(false);
-  };
-
-  const handleDragEnd = (e: React.DragEvent<HTMLDivElement>, droppedEvent: CalendarEvent) => {
-    const updatedEvents = calendarEvents.map((event) => {
-      if (event.id === droppedEvent.id) {
-        const updatedEvent = { ...event, startTime: selectedDay, endTime: selectedDay };
-        return updatedEvent;
-      }
-      return event;
-    });
-    setCalendarEvents(updatedEvents);
-  };
 
   const renderWeekCells = () => {
     const cells = [];
@@ -56,7 +46,7 @@ const WeekView: React.FC<WeekViewProps> = ({ events, weekStartDate }) => {
           className={`h-full border border-brown-300 p-2.5 rounded-lg shadow-md ${
             isToday ? "bg-[#ffe4cb95]" : ""
           }`}
-          onDoubleClick={() => setSelectedDay(currentCellDate)}
+          onDoubleClick={() => handleDayDoubleClick(currentCellDate)}
         >
           <div
             className={`font-semibold ${
@@ -83,17 +73,10 @@ const WeekView: React.FC<WeekViewProps> = ({ events, weekStartDate }) => {
       );
     }
     return cells;
-};
+  };
 
   return (
     <div className="h-screen flex flex-col bg-fffff5 text-brown-600">
-       <AddEventForm
-        selectedDay={selectedDay}
-        onAddEvent={handleAddEvent}
-        showForm={showForm}
-        setShowForm={setShowForm}
-        dayClicked={null}
-      />
       <div className="grid grid-cols-7 gap-2 flex-grow">
         {renderWeekCells().map((cell, index) => (
           <div key={index}>{cell}</div>

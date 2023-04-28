@@ -110,36 +110,26 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
       setEndTime(newEndTime);
     }
   };
-    
-    if (!showForm || !selectedDay) return null;
-    
 
+  if (!showForm || !selectedDay) return null;
 
+  return (
+    <div className="fixed inset-0 w-screen h-screen flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white p-8 w-96 rounded-lg shadow-md">
+        <h2 className="text-2xl mb-4">Add Event</h2>
 
-    
-  function handleAddEvent(event: FormEvent<HTMLFormElement>): void {
-    throw new Error("Function not implemented.");
-  }
-
-    return (
-      <div
-      className="fixed inset-0 w-screen h-screen flex items-center justify-center bg-black bg-opacity-50 z-50"
-      >
-        <div className="bg-white p-8 w-96 rounded-lg shadow-md">
-          <h2 className="text-2xl mb-4">Add Event</h2>
-
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="eventName" className="block mb-2">
-              Event Name
-            </label>
-            <input
-              type="text"
-              id="eventName"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md mb-4"
-            />
-               <div className="mb-4">
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="eventName" className="block mb-2">
+            Event Name
+          </label>
+          <input
+            type="text"
+            id="eventName"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+          />
+          <div className="mb-4">
             <label className="block mb-1">Event Color</label>
             <div className="flex space-x-2">
               {[
@@ -175,66 +165,66 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
               ))}
             </div>
           </div>
-            <div className="mb-4">
-              <label htmlFor="fullDayEvent" className="block mb-1">
-                Full Day Event
-              </label>
-              <input
-                type="checkbox"
-                id="fullDayEvent"
-                name="fullDayEvent"
-                checked={fullDayEvent}
-                onChange={handleFullDayEventChange}
-              />
-            </div>
-            {!fullDayEvent && (
-              <>
-                <div className="mb-4">
-                  <label htmlFor="startTime" className="block mb-1">
-                    Start Time
-                  </label>
-                  <input
-                    type="time"
-                    id="startTime"
-                    name="startTime"
-                    onChange={handleTimeChange}
-                    className="w-full border-2 border-gray-300 p-2 rounded-lg focus:outline-none focus:border-blue-300"
-                    required={!fullDayEvent}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="endTime" className="block mb-1">
-                    End Time
-                  </label>
-                  <input
-                    type="time"
-                    id="endTime"
-                    name="endTime"
-                    onChange={handleTimeChange}
-                    className="w-full border-2 border-gray-300 p-2 rounded-lg focus:outline-none focus:border-blue-300"
-                    required={!fullDayEvent}
-                  />
-                </div>
-              </>
-            )}
-            <div className="flex justify-between">
+          <div className="mb-4">
+            <label htmlFor="fullDayEvent" className="block mb-1">
+              Full Day Event
+            </label>
+            <input
+              type="checkbox"
+              id="fullDayEvent"
+              name="fullDayEvent"
+              checked={fullDayEvent}
+              onChange={handleFullDayEventChange}
+            />
+          </div>
+          {!fullDayEvent && (
+            <>
+              <div className="mb-4">
+                <label htmlFor="startTime" className="block mb-1">
+                  Start Time
+                </label>
+                <input
+                  type="time"
+                  id="startTime"
+                  name="startTime"
+                  onChange={handleTimeChange}
+                  className="w-full border-2 border-gray-300 p-2 rounded-lg focus:outline-none focus:border-blue-300"
+                  required={!fullDayEvent}
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="endTime" className="block mb-1">
+                  End Time
+                </label>
+                <input
+                  type="time"
+                  id="endTime"
+                  name="endTime"
+                  onChange={handleTimeChange}
+                  className="w-full border-2 border-gray-300 p-2 rounded-lg focus:outline-none focus:border-blue-300"
+                  required={!fullDayEvent}
+                />
+              </div>
+            </>
+          )}
+          <div className="flex justify-between">
             <button
               type="submit"
               className="bg-green-500 text-white px-4 py-2 rounded-md"
             >
               Add Event
             </button>
-              <button
-                onClick={() => setShowForm(false)}
-                className="bg-gray-300 text-black px-4 py-2 rounded-md"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
+            <button
+              onClick={() => setShowForm(false)}
+              className="bg-gray-300 text-black px-4 py-2 rounded-md"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
-    );
-    };
-    
-    export default AddEventForm;
+    </div>
+  );
+};
+
+export default AddEventForm;

@@ -218,23 +218,31 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
   };
   return (
     <div className="h-screen flex flex-col bg-fffff5 text-brown-600">
-      
       <button onClick={handleMonthViewClick}>Month View</button>
       <button onClick={handleWeekViewClick}>Week View</button>
-      {view === "week" ? (
-        <>
-        <div className="grid grid-cols-7 gap-2 my-2">{renderDaysOfWeek()}</div>
-        <WeekView events={calendarEvents} weekStartDate={weekStartDate} />
-        </>
-      ) : (
-        <>
-          <AddEventForm
+      <AddEventForm
             selectedDay={selectedDay}
             dayClicked={selectedDay}
             onAddEvent={handleAddEvent}
             showForm={showForm}
             setShowForm={setShowForm}
           />
+      {view === "week" ? (
+        <>
+          <div className="grid grid-cols-7 gap-2 my-2">
+            {renderDaysOfWeek()}
+          </div>
+          <WeekView
+            calendarEvents={calendarEvents}
+            weekStartDate={weekStartDate}
+            handleAddEvent={handleAddEvent}
+            setSelectedDay={setSelectedDay}
+            handleDayDoubleClick={handleDayDoubleClick}
+          />
+        </>
+      ) : (
+        <>
+
           <div className="flex items-center justify-between mb-0">
             <button
               onClick={handlePreviousMonth}
