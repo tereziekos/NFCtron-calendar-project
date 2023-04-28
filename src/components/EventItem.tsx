@@ -13,7 +13,7 @@ const EventItem: React.FC<EventItemProps> = ({
   onDeleteEvent,
   onDragEnd,
 }) => {
-  const { name, color } = event;
+  const { name, startTime, endTime, color } = event;
 
   const handleDragStart = (
     e: React.DragEvent<HTMLDivElement>,
@@ -30,7 +30,9 @@ const EventItem: React.FC<EventItemProps> = ({
       onDragStart={(e) => handleDragStart(e, event)}
       onDragEnd={onDragEnd}
     >
-      <div>{name}</div>
+      <div>
+        {name} {startTime.getHours()}-{endTime.getHours()}
+      </div>
       <div className="flex items-center absolute right-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <AiFillDelete
           className="text-xl cursor-pointer ml-2"

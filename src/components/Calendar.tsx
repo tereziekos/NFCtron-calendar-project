@@ -48,14 +48,7 @@ const Calendar = () => {
 
   const handleDeleteEvent = (eventToDelete: CalendarEvent) => {
     setCalendarEvents((prevEvents) =>
-      prevEvents.filter(
-        (event) =>
-          !(
-            event.name === eventToDelete.name &&
-            event.startTime.getTime() === eventToDelete.startTime.getTime() &&
-            event.endTime.getTime() === eventToDelete.endTime.getTime()
-          )
-      )
+      prevEvents.filter((event) => !(event.id === eventToDelete.id))
     );
   };
 

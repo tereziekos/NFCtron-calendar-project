@@ -207,7 +207,12 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
           <div className="flex justify-between">
             <button
               type="submit"
-              className="bg-green-500 text-white px-4 py-2 rounded-md"
+              className="bg-green-500 text-white px-4 py-2 rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed"
+              disabled={
+                !name ||
+                (!fullDayEvent &&
+                  (!startTime || !endTime || startTime >= endTime))
+              }
             >
               Add Event
             </button>
