@@ -78,10 +78,6 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
     }
   };
 
-  const handleCancel = () => {
-    setShowForm(false);
-  };
-
   const handleFullDayEventChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFullDayEvent(e.target.checked);
     if (selectedDay && e.target.checked) {

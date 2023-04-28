@@ -13,7 +13,7 @@ const EventItem: React.FC<EventItemProps> = ({
   onDeleteEvent,
   onDragEnd,
 }) => {
-  const { name, startTime, endTime, color } = event;
+  const { name, color } = event;
 
   const handleDragStart = (
     e: React.DragEvent<HTMLDivElement>,

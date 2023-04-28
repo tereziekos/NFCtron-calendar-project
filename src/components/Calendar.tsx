@@ -5,31 +5,10 @@ import { nanoid } from "nanoid";
 import { CalendarEvent } from "./types";
 import WeekView from "./WeekView";
 
-interface CalendarProps {
-  events: CalendarEvent[];
-}
-
-const getLocalTimezoneDate = (dateString: string) => {
-  const date = new Date(dateString);
-  const timezoneOffset = date.getTimezoneOffset() * 60000; // Convert minutes to milliseconds
-  const localDate = new Date(date.getTime() - timezoneOffset);
-  return localDate;
-};
-
-const getStartDate = (date: Date) => {
-  const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-  const dayOfWeek = firstDayOfMonth.getDay() || 7; // Monday is 1, Sunday is 7
-  const startDate = new Date(firstDayOfMonth);
-  startDate.setDate(startDate.getDate() - dayOfWeek + 1);
-  return startDate;
-};
-
-const Calendar: React.FC<CalendarProps> = ({ events }) => {
+const Calendar = () => {
   const [view, setView] = useState<"month" | "week">("month");
   const [weekStartDate, setWeekStartDate] = useState(new Date());
-  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(events);
-  const currentDate = new Date(); // You can use a state to manage the current date
-  const startDate = getStartDate(currentDate);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
@@ -67,15 +46,6 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
     setView("month");
   };
 
-  const isToday = (date: Date) => {
-    const today = new Date();
-    return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
-    );
-  };
-
   const handleDeleteEvent = (eventToDelete: CalendarEvent) => {
     setCalendarEvents((prevEvents) =>
       prevEvents.filter(
@@ -100,10 +70,6 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
     e.dataTransfer.setData("text/plain", JSON.stringify(event));
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
-
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const eventJson = e.dataTransfer.getData("text/plain");
@@ -126,7 +92,6 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
     setShowForm(true);
   };
 
-  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const monthNames = [
     "January",
     "February",
@@ -144,7 +109,6 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
 
   const renderCalendarCells = () => {
     const startDate = new Date(currentYear, currentMonth, 1);
-    const endDate = new Date(currentYear, currentMonth + 1, 0);
     const cells = [];
     for (let i = 0; i < 42; i++) {
       const currentCellDate = new Date(startDate);
@@ -155,7 +119,6 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
 
       const dayEvents = calendarEvents.filter((event) => {
         const eventStartTime = new Date(event.startTime);
-        const eventEndTime = new Date(event.endTime);
         return (
           eventStartTime.getDate() === currentCellDate.getDate() &&
           eventStartTime.getMonth() === currentCellDate.getMonth() &&
@@ -221,12 +184,12 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
       <button onClick={handleMonthViewClick}>Month View</button>
       <button onClick={handleWeekViewClick}>Week View</button>
       <AddEventForm
-            selectedDay={selectedDay}
-            dayClicked={selectedDay}
-            onAddEvent={handleAddEvent}
-            showForm={showForm}
-            setShowForm={setShowForm}
-          />
+        selectedDay={selectedDay}
+        dayClicked={selectedDay}
+        onAddEvent={handleAddEvent}
+        showForm={showForm}
+        setShowForm={setShowForm}
+      />
       {view === "week" ? (
         <>
           <div className="grid grid-cols-7 gap-2 my-2">
@@ -242,7 +205,6 @@ const Calendar: React.FC<CalendarProps> = ({ events }) => {
         </>
       ) : (
         <>
-
           <div className="flex items-center justify-between mb-0">
             <button
               onClick={handlePreviousMonth}
