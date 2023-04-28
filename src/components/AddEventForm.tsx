@@ -100,6 +100,7 @@ const AddEventForm: React.FC<AddEventFormProps> = ({
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const timeString = e.target.value;
     const [hours, minutes] = timeString.split(":").map(Number);
+    if (!selectedDay) throw new Error("No selected day");
     if (e.target.name === "startTime") {
       const newStartTime = new Date(selectedDay);
       newStartTime.setHours(hours, minutes, 0, 0);

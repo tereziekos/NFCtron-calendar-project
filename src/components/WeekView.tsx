@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import AddEventForm from "./AddEventForm";
 import EventItem from "./EventItem";
-import { nanoid } from "nanoid";
 import { CalendarEvent } from "./types";
 
 interface WeekViewProps {
@@ -15,12 +13,8 @@ interface WeekViewProps {
 const WeekView: React.FC<WeekViewProps> = ({
   calendarEvents,
   weekStartDate,
-  handleAddEvent,
-  setSelectedDay,
   handleDayDoubleClick,
 }) => {
-  const [showForm, setShowForm] = useState(false);
-
   const renderWeekCells = () => {
     const cells = [];
     for (let i = 0; i < 7; i++) {
@@ -32,7 +26,6 @@ const WeekView: React.FC<WeekViewProps> = ({
 
       const dayEvents = calendarEvents.filter((event) => {
         const eventStartTime = new Date(event.startTime);
-        const eventEndTime = new Date(event.endTime);
         return (
           eventStartTime.getDate() === currentCellDate.getDate() &&
           eventStartTime.getMonth() === currentCellDate.getMonth() &&
@@ -61,12 +54,8 @@ const WeekView: React.FC<WeekViewProps> = ({
             <EventItem
               key={event.id}
               event={event}
-              onDeleteEvent={() =>
-                setCalendarEvents((prevEvents) =>
-                  prevEvents.filter((e) => e.id !== event.id)
-                )
-              }
               onDragEnd={() => {}}
+              onDeleteEvent={() => {}}
             />
           ))}
         </div>
